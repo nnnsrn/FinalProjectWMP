@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Final Project</string>
+    
+    <array name="priority_levels">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </array>
+</resources>
