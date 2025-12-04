@@ -28,7 +28,8 @@ public class EventListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
 
-        rvEvents = findViewById(R.id.rvEvents);
+        // ID harus sesuai XML
+        rvEvents = findViewById(R.id.recyclerViewEvents);
         btnAddEvent = findViewById(R.id.btnAddEvent);
         db = new DBHelper(this);
 
@@ -49,14 +50,19 @@ public class EventListActivity extends AppCompatActivity {
         Cursor c = db.getAllEvents();
 
         while (c.moveToNext()) {
+            // PERBAIKAN DI SINI:
+            // Kita ambil 4 data sesuai urutan kolom di DBHelper (id, eventName, eventDate, notes)
             list.add(new EventModel(
-                    c.getInt(0),
-                    c.getString(1),
-                    c.getString(2)
+                    c.getInt(0),      // id
+                    c.getString(1),   // eventName
+                    c.getString(2),   // eventDate
+                    c.getString(3)    // notes (INI YANG TADI KURANG)
             ));
         }
 
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
-        rvEvents.setAdapter(new EventAdapter(this, list));
+
+        // Parameter ke-3 null karena kita belum pasang listener klik
+        rvEvents.setAdapter(new EventAdapter(this, list, null));
     }
 }

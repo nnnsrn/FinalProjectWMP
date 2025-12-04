@@ -7,13 +7,13 @@ import android.widget.Button;
 import android.widget.Chronometer;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import com.example.finalproject.R;
 import com.example.finalproject.adapters.ScreenTimeAdapter;
@@ -35,10 +35,13 @@ public class ScreenTimeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_screen_time);
 
+        // ID ini sekarang SUDAH ADA di XML baru kamu
         chronometer = findViewById(R.id.chronometer);
         btnStart = findViewById(R.id.btnStartScreen);
         btnStop = findViewById(R.id.btnStopScreen);
-        rvHistory = findViewById(R.id.rvScreenHistory);
+
+        // Perbaikan ID RecyclerView (sesuai XML)
+        rvHistory = findViewById(R.id.recyclerViewScreenTime);
 
         db = new DBHelper(this);
 
@@ -62,7 +65,10 @@ public class ScreenTimeActivity extends AppCompatActivity {
             long elapsed = SystemClock.elapsedRealtime() - chronometer.getBase();
             int seconds = (int) (elapsed / 1000);
 
-            String date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            // Simpan tanggal hari ini
+            String date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+
+            // Simpan ke SQLite (DBHelper)
             db.addScreenTime(date, seconds);
 
             pauseOffset = 0;

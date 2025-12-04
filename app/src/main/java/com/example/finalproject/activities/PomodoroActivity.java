@@ -22,9 +22,10 @@ public class PomodoroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pomodoro);
 
-        tvTimer = findViewById(R.id.tvTimer);
-        btnStart = findViewById(R.id.btnStart);
-        btnReset = findViewById(R.id.btnReset);
+        // --- PERBAIKAN ID ---
+        tvTimer = findViewById(R.id.textViewTimer);         // XML: textViewTimer
+        btnStart = findViewById(R.id.btnStartPomodoro);     // XML: btnStartPomodoro
+        btnReset = findViewById(R.id.btnResetPomodoro);     // XML: btnResetPomodoro
 
         updateDisplay();
 

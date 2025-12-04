@@ -18,16 +18,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewCurrentTime"
+    <Chronometer
+        android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Current Session: 0 minutes"
-        android:textSize="18sp"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewScreenTimeTitle" />
+
+    <Button
+        android:id="@+id/btnStartScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Start Tracking"
+        app:layout_constraintEnd_toStartOf="@+id/btnStopScreen"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chronometer" />
+
+    <Button
+        android:id="@+id/btnStopScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Stop &amp; Save"
+        app:layout_constraintBottom_toBottomOf="@+id/btnStartScreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnStartScreen"
+        app:layout_constraintTop_toTopOf="@+id/btnStartScreen" />
 
     <TextView
         android:id="@+id/textViewHistoryTitle"
@@ -38,18 +58,16 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewCurrentTime" />
+        app:layout_constraintTop_toBottomOf="@+id/btnStartScreen" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewScreenTime"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:padding="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewHistoryTitle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

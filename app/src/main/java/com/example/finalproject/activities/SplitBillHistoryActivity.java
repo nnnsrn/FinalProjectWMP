@@ -24,7 +24,7 @@ public class SplitBillHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_split_bill_history);
 
-        rvHistory = findViewById(R.id.rvSplitHistory);
+        rvHistory = findViewById(R.id.recyclerViewSplitBillHistory);
         db = new DBHelper(this);
 
         loadHistory();
@@ -35,15 +35,19 @@ public class SplitBillHistoryActivity extends AppCompatActivity {
         Cursor c = db.getSplitBillHistory();
 
         while (c.moveToNext()) {
+            // Urutan index kolom sesuai DBHelper.onCreate
+            // 0:id, 1:desc, 2:date, 3:total, 4:count, 5:result
             list.add(new SplitBillModel(
-                    c.getInt(0),
-                    c.getDouble(1),
-                    c.getInt(2),
-                    c.getDouble(3)
+                    c.getInt(0),        // id
+                    c.getString(1),     // description
+                    c.getString(2),     // date
+                    c.getDouble(3),     // totalAmount
+                    c.getInt(4),        // personCount
+                    c.getDouble(5)      // resultPerPerson
             ));
         }
 
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
-        rvHistory.setAdapter(new SplitBillAdapter(this, list));
+        rvHistory.setAdapter(new SplitBillAdapter(this, list, null));
     }
 }

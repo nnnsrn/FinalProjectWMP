@@ -24,7 +24,10 @@ public class LeaderboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
-        rvLeaderboard = findViewById(R.id.rvLeaderboard);
+        // PERBAIKAN: Ganti R.id.rvLeaderboard menjadi R.id.recyclerViewLeaderboard
+        // (Sesuai dengan ID yang ada di file activity_leaderboard.xml)
+        rvLeaderboard = findViewById(R.id.recyclerViewLeaderboard);
+
         db = new DBHelper(this);
 
         loadData();
@@ -32,6 +35,8 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     private void loadData() {
         ArrayList<LeaderboardModel> list = new ArrayList<>();
+
+        // Kita masih pakai DBHelper (SQLite) untuk Leaderboard (Hybrid)
         Cursor c = db.getLeaderboard();
 
         while (c.moveToNext()) {

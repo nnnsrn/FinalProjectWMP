@@ -45,15 +45,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskModel task = taskList.get(position);
 
-        holder.taskName.setText(task.getTaskName());
-        holder.taskDate.setText("Due: " + task.getDueDate());
-        holder.taskPoints.setText("Points: " + task.getPoints());
-        holder.taskDone.setChecked(task.isDone());
+        holder.taskName.setText(task.getTitle()); // Gunakan getTitle()
+        holder.taskDesc.setText(task.getDescription()); // Tampilkan deskripsi jika ada
+        holder.taskDone.setChecked(task.getIsDone() == 1);
 
-        holder.btnEdit.setOnClickListener(v -> listener.onEdit(task));
-        holder.btnDelete.setOnClickListener(v -> listener.onDelete(task));
-        holder.taskDone.setOnCheckedChangeListener((button, checked) ->
-                listener.onChecked(task, checked));
+        // Tombol Edit & Delete
+        // Kita cek null dulu biar aman kalau listener belum dipasang
+        holder.btnEdit.setOnClickListener(v -> {
+            if (listener != null) listener.onEdit(task);
+        });
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) listener.onDelete(task);
+        });
+        holder.taskDone.setOnCheckedChangeListener((button, checked) -> {
+            if (listener != null) listener.onChecked(task, checked);
+        });
     }
 
     @Override
@@ -63,7 +69,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        TextView taskName, taskDate, taskPoints;
+        TextView taskName, taskDesc;
         CheckBox taskDone;
         Button btnEdit, btnDelete;
 
@@ -71,8 +77,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             super(itemView);
 
             taskName = itemView.findViewById(R.id.textViewTaskName);
-            taskDate = itemView.findViewById(R.id.textViewDueDate);
-            taskPoints = itemView.findViewById(R.id.textViewPoints);
+            taskDesc = itemView.findViewById(R.id.textViewDueDate); // Sementara pakai ID ini untuk deskripsi
             taskDone = itemView.findViewById(R.id.checkBoxIsDone);
             btnEdit = itemView.findViewById(R.id.btnEditTask);
             btnDelete = itemView.findViewById(R.id.btnDeleteTask);

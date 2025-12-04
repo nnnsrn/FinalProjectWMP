@@ -1,26 +1,25 @@
 package com.example.finalproject.activities;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-
 import com.example.finalproject.R;
 import com.example.finalproject.adapters.TaskAdapter;
-import com.example.finalproject.database.DBHelper;
 import com.example.finalproject.models.TaskModel;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.ArrayList;
 
 public class TaskListActivity extends AppCompatActivity {
 
     RecyclerView rvTasks;
     Button btnAdd;
-    DBHelper db;
+    FirebaseFirestore db;
     ArrayList<TaskModel> list;
     TaskAdapter adapter;
 
@@ -29,37 +28,41 @@ public class TaskListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
 
-        rvTasks = findViewById(R.id.rvTasks);
+        rvTasks = findViewById(R.id.recyclerViewTasks); // Pastikan ID ini sesuai xml (kadang rvTasks/recyclerViewTasks)
         btnAdd = findViewById(R.id.btnAddTask);
-        db = new DBHelper(this);
 
-        loadTasks();
+        db = FirebaseFirestore.getInstance();
+        list = new ArrayList<>();
+
+        // Setup RecyclerView
+        // Note: Kita kasih 'null' dulu ke listener karena belum kita bahas fitur edit/hapus di tahap ini
+        adapter = new TaskAdapter(this, list, null);
+        rvTasks.setLayoutManager(new LinearLayoutManager(this));
+        rvTasks.setAdapter(adapter);
+
+        // Panggil fungsi untuk memantau data Firebase
+        listenToFirebase();
 
         btnAdd.setOnClickListener(v ->
                 startActivity(new Intent(this, AddTaskActivity.class)));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadTasks(); // refresh data
-    }
+    private void listenToFirebase() {
+        // Ini akan berjalan otomatis setiap ada perubahan data di Cloud
+        db.collection("tasks")
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        return;
+                    }
 
-    private void loadTasks() {
-        list = new ArrayList<>();
-        Cursor c = db.getAllTasks();
-
-        while (c.moveToNext()) {
-            list.add(new TaskModel(
-                    c.getInt(0),
-                    c.getString(1),
-                    c.getString(2),
-                    c.getInt(3)
-            ));
-        }
-
-        rvTasks.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TaskAdapter(this, list);
-        rvTasks.setAdapter(adapter);
+                    list.clear();
+                    for (QueryDocumentSnapshot doc : value) {
+                        // Mengubah data JSON firebase jadi Java Object
+                        TaskModel task = doc.toObject(TaskModel.class);
+                        task.setId(doc.getId()); // Simpan ID dokumennya
+                        list.add(task);
+                    }
+                    adapter.notifyDataSetChanged();
+                });
     }
 }

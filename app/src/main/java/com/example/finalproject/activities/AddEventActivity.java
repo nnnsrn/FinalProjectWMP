@@ -26,6 +26,7 @@ public class AddEventActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
 
+        // Pastikan ID ini sesuai dengan activity_add_event.xml kamu
         editTextEventName = findViewById(R.id.editTextEventName);
         editTextEventDate = findViewById(R.id.editTextEventDate);
         editTextNotes = findViewById(R.id.editTextNotes);
@@ -47,6 +48,7 @@ public class AddEventActivity extends AppCompatActivity {
         DatePickerDialog dp = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Format tanggal sederhana: dd/MM/yyyy
                     String date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
                     editTextEventDate.setText(date);
                 },
@@ -65,6 +67,7 @@ public class AddEventActivity extends AppCompatActivity {
             return;
         }
 
+        // Panggil fungsi insertEvent dari DBHelper (pastikan di DBHelper namanya insertEvent ya)
         boolean inserted = dbHelper.insertEvent(name, date, notes);
 
         if (inserted) {

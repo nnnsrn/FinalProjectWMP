@@ -24,35 +24,33 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // TASKS (Firebase mode: table ini tidak dipakai, tapi dibiarkan biar gak error)
+        db.execSQL("CREATE TABLE " + TABLE_TASK + " (id INTEGER PRIMARY KEY, title TEXT)");
 
-        // TASKS TABLE
-        db.execSQL("CREATE TABLE " + TABLE_TASK + " (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "title TEXT, " +
-                "description TEXT, " +
-                "isDone INTEGER)");
-
-        // EVENTS TABLE
+        // EVENTS
         db.execSQL("CREATE TABLE " + TABLE_EVENT + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "eventName TEXT, " +
-                "eventDate TEXT)");
+                "eventDate TEXT, " +
+                "notes TEXT)");
 
-        // LEADERBOARD TABLE
+        // LEADERBOARD
         db.execSQL("CREATE TABLE " + TABLE_LEADERBOARD + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "username TEXT, " +
                 "score INTEGER)");
 
-        // SCREEN TIME TABLE
+        // SCREEN TIME
         db.execSQL("CREATE TABLE " + TABLE_SCREEN_TIME + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "date TEXT, " +
                 "duration INTEGER)");
 
-        // SPLIT BILL TABLE
+        // SPLIT BILL (Updated: tambah description & date)
         db.execSQL("CREATE TABLE " + TABLE_SPLIT_BILL + " (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "description TEXT, " +
+                "date TEXT, " +
                 "totalAmount REAL, " +
                 "personCount INTEGER, " +
                 "resultPerPerson REAL)");
@@ -68,39 +66,13 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // -------------------- TASK CRUD --------------------
-    public boolean addTask(String title, String desc) {
+    // -------------------- EVENTS --------------------
+    public boolean insertEvent(String name, String date, String notes) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
-        cv.put("title", title);
-        cv.put("description", desc);
-        cv.put("isDone", 0);
-
-        return db.insert(TABLE_TASK, null, cv) != -1;
-    }
-
-    public Cursor getAllTasks() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_TASK, null);
-    }
-
-    public void updateTaskDone(int id, boolean done) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("isDone", done ? 1 : 0);
-        db.update(TABLE_TASK, cv, "id=?", new String[]{String.valueOf(id)});
-    }
-
-    // -------------------- EVENTS CRUD --------------------
-    public boolean addEvent(String name, String date, String notes) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-
         cv.put("eventName", name);
         cv.put("eventDate", date);
         cv.put("notes", notes);
-
         return db.insert(TABLE_EVENT, null, cv) != -1;
     }
 
@@ -113,10 +85,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void addScore(String username, int score) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
         cv.put("username", username);
         cv.put("score", score);
-
         db.insert(TABLE_LEADERBOARD, null, cv);
     }
 
@@ -129,10 +99,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void addScreenTime(String date, int duration) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
         cv.put("date", date);
         cv.put("duration", duration);
-
         db.insert(TABLE_SCREEN_TIME, null, cv);
     }
 
@@ -142,13 +110,20 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // -------------------- SPLIT BILL --------------------
-    public boolean addSplitBill(double total, int persons, double each) {
+    // Updated: Terima deskripsi & date
+    public boolean addSplitBill(String desc, String date, double total, int persons, double each) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
+        cv.put("description", desc);
+        cv.put("date", date);
         cv.put("totalAmount", total);
         cv.put("personCount", persons);
         cv.put("resultPerPerson", each);
-
         return db.insert(TABLE_SPLIT_BILL, null, cv) != -1;
-    }}
+    }
+
+    public Cursor getSplitBillHistory() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_SPLIT_BILL, null);
+    }
+}

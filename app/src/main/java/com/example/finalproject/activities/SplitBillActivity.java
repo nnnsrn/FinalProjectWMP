@@ -1,5 +1,6 @@
 package com.example.finalproject.activities;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -11,9 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.database.DBHelper;
 
+import java.util.Calendar;
+
 public class SplitBillActivity extends AppCompatActivity {
 
-    EditText etTotal, etPerson;
+    EditText etTotal, etPerson, etDesc, etDate;
     Button btnCalculate, btnHistory;
     DBHelper db;
 
@@ -22,21 +25,44 @@ public class SplitBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_split_bill);
 
-        etTotal = findViewById(R.id.etTotal);
-        etPerson = findViewById(R.id.etPerson);
+        etTotal = findViewById(R.id.editTextTotalAmount);
+        etPerson = findViewById(R.id.editTextNumberOfPeople);
+        // ID tambahan dari XML
+        etDesc = findViewById(R.id.editTextDescription);
+        etDate = findViewById(R.id.editTextDate);
+
         btnCalculate = findViewById(R.id.btnCalculate);
-        btnHistory = findViewById(R.id.btnHistory);
+        btnHistory = findViewById(R.id.btnViewHistory);
 
         db = new DBHelper(this);
 
+        // Fitur Date Picker sederhana
+        etDate.setOnClickListener(v -> {
+            Calendar c = Calendar.getInstance();
+            new DatePickerDialog(this, (view, year, month, day) ->
+                    etDate.setText(day + "/" + (month + 1) + "/" + year),
+                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
         btnCalculate.setOnClickListener(v -> {
-            double total = Double.parseDouble(etTotal.getText().toString());
-            int persons = Integer.parseInt(etPerson.getText().toString());
+            String totalStr = etTotal.getText().toString();
+            String personStr = etPerson.getText().toString();
+            String desc = etDesc.getText().toString();
+            String date = etDate.getText().toString();
+
+            if (totalStr.isEmpty() || personStr.isEmpty()) {
+                Toast.makeText(this, "Isi Total & Jumlah Orang", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            double total = Double.parseDouble(totalStr);
+            int persons = Integer.parseInt(personStr);
             double each = total / persons;
 
-            db.addSplitBill(total, persons, each);
+            // Simpan ke DB dengan data lengkap
+            db.addSplitBill(desc, date, total, persons, each);
 
-            Toast.makeText(this, "Each person pays: " + each, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Per orang: " + each, Toast.LENGTH_LONG).show();
         });
 
         btnHistory.setOnClickListener(v ->
